@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const path='src/game/Adventure.js';let code=fs.readFileSync(path,'utf8');
+code=code.replace("import {chapters,assets,audio,lines,cues,ending,obstacles} from '../data/story.js';",`import {story,ending} from '../data/story.js';
+import {chapters,lines,obstacles} from '../data/world.js';
+import {assets,audio,cues} from '../data/assets.js';
+import {registerScenery,scenery} from './scenery.js';
+import {drawInteraction} from './objects.js';`);
+code=code.replace('this.makeTextures();this.registerAnimations();','this.makeTextures();this.registerAnimations();registerScenery(this);');
+const start=code.indexOf('  const g=this.add.graphics();g.fillStyle(this.chapter.color)');
+const stop=code.indexOf('  this.objects=[];',start);assert.ok(start>0&&stop>start);
+code=code.slice(0,start)+'  scenery(this,this.chapter,obstacles);\n'+code.slice(stop);
+const objStart=code.indexOf(' drawObject(o){');const objEnd=code.indexOf(' speak(pages,',objStart);assert.ok(objStart>0&&objEnd>objStart);
+code=code.slice(0,objStart)+' drawObject(o){drawInteraction(this,o)}\n'+code.slice(objEnd);
+fs.writeFileSync(path,code);

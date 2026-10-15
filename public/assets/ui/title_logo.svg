@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 160" width="460" height="160">
+  <defs>
+    <!-- Letter Gradients -->
+    <linearGradient id="gradF" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ded8ff" />
+      <stop offset="45%" stop-color="#b6a8e8" />
+      <stop offset="100%" stop-color="#7c6aa8" />
+    </linearGradient>
+    <linearGradient id="gradO" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffde3" />
+      <stop offset="45%" stop-color="#fde57e" />
+      <stop offset="100%" stop-color="#e2a82b" />
+    </linearGradient>
+    <linearGradient id="gradP" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffeef3" />
+      <stop offset="45%" stop-color="#fca8be" />
+      <stop offset="100%" stop-color="#d95e80" />
+    </linearGradient>
+    <linearGradient id="gradExcl" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffde3" />
+      <stop offset="45%" stop-color="#fde57e" />
+      <stop offset="100%" stop-color="#e2a82b" />
+    </linearGradient>
+    <linearGradient id="gradHeart" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff9ab4" />
+      <stop offset="100%" stop-color="#e91e63" />
+    </linearGradient>
+    <linearGradient id="bannerBg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1c1a36" />
+      <stop offset="50%" stop-color="#2a254d" />
+      <stop offset="100%" stop-color="#1c1a36" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="shadowFilter" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0a0b14" flood-opacity="0.8" />
+    </filter>
+  </defs>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Pixelify+Sans:wght@700&amp;display=swap');
+    .banner-text {
+      font-family: 'Pixelify Sans', 'Press Start 2P', monospace, sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      fill: #fcf2d9;
+      text-anchor: middle;
+    }
+  </style>
+
+  <!-- Ambient Soft Aura -->
+  <ellipse cx="230" cy="65" rx="200" ry="50" fill="#f8e8a2" opacity="0.1" />
+
+  <!-- Background Cute Twinkles -->
+  <g opacity="0.9">
+    <!-- Left Gold Star -->
+    <path d="M 46 36 Q 54 36 54 28 Q 54 36 62 36 Q 54 36 54 44 Q 54 36 46 36" fill="#ffee8c" />
+    <circle cx="54" cy="36" r="1.5" fill="#fff" />
+
+    <!-- Left Cyan Star -->
+    <path d="M 32 78 Q 38 78 38 72 Q 38 78 44 78 Q 38 78 38 84 Q 38 78 32 78" fill="#78e4f0" />
+
+    <!-- Right Cyan Star -->
+    <path d="M 405 32 Q 413 32 413 24 Q 413 32 421 32 Q 413 32 413 40 Q 413 32 405 32" fill="#78e4f0" />
+    <circle cx="413" cy="32" r="1.5" fill="#fff" />
+
+    <!-- Right Gold Star -->
+    <path d="M 420 74 Q 426 74 426 68 Q 426 74 432 74 Q 426 74 426 80 Q 426 74 420 74" fill="#ffee8c" />
+
+    <!-- Soft Floating Hearts -->
+    <path d="M 28 48 C 28 42 34 42 37 46 C 40 42 46 42 46 48 C 46 54 37 60 37 60 C 37 60 28 54 28 48 Z" fill="#ffd2de" opacity="0.6" transform="rotate(-15 37 51)" />
+    <path d="M 425 50 C 425 44 431 44 434 48 C 437 44 443 44 443 50 C 443 56 434 62 434 62 C 434 62 425 56 425 50 Z" fill="#ffd2de" opacity="0.6" transform="rotate(15 434 53)" />
+  </g>
+
+  <!-- FOX EARS atop 'O' -->
+  <g id="fox-ears">
+    <!-- Left Fox Ear (aishikichu - Lavender Blue) -->
+    <!-- Shadow -->
+    <polygon points="174,32 163,3 192,16" fill="#121324" transform="translate(0, 3)" />
+    <!-- Outer Fur -->
+    <polygon points="174,32 163,3 192,16" fill="#1b1c34" stroke="#121324" stroke-width="2" />
+    <polygon points="173,29 165,6 189,17" fill="#9d8fc9" />
+    <!-- Inner Ear Pink -->
+    <polygon points="173,26 168,11 184,18" fill="#f7a0b9" />
+    <polygon points="172,23 170,14 180,18" fill="#ffe3eb" />
+
+    <!-- Right Fox Ear (memma - Cream Gold) -->
+    <!-- Shadow -->
+    <polygon points="214,16 243,3 232,32" fill="#121324" transform="translate(0, 3)" />
+    <!-- Outer Fur -->
+    <polygon points="214,16 243,3 232,32" fill="#1b1c34" stroke="#121324" stroke-width="2" />
+    <polygon points="217,17 241,6 233,29" fill="#f6dfaa" />
+    <!-- Inner Ear Pink -->
+    <polygon points="222,18 238,11 233,26" fill="#f7a0b9" />
+    <polygon points="226,18 236,14 234,23" fill="#ffe3eb" />
+  </g>
+
+  <!-- 3D EXTRUSION SHADOW (Offset +5px, +5px) -->
+  <g fill="#121324" transform="translate(5, 5)">
+    <!-- F Shadow -->
+    <path d="M 85,25 L 145,25 L 145,45 L 109,45 L 109,56 L 138,56 L 138,74 L 109,74 L 109,102 L 85,102 Z" />
+    <!-- O Shadow -->
+    <path d="M 160,36 C 160,26 170,22 182,22 L 224,22 C 236,22 246,26 246,36 L 246,91 C 246,101 236,105 224,105 L 182,105 C 170,105 160,101 160,91 Z M 184,45 C 184,41 188,39 192,39 L 214,39 C 218,39 222,41 222,45 L 222,82 C 222,86 218,88 214,88 L 192,88 C 188,88 184,86 184,82 Z" />
+    <!-- P Shadow -->
+    <path d="M 262,25 L 314,25 C 326,25 334,31 334,44 L 334,58 C 334,71 326,77 314,77 L 286,77 L 286,102 L 262,102 Z M 286,43 L 308,43 C 311,43 313,44 313,47 L 313,55 C 313,58 311,59 308,59 L 286,59 Z" />
+    <!-- ! Stem Shadow -->
+    <path d="M 350,25 L 372,25 L 369,72 L 353,72 Z" />
+    <!-- ! Dot Shadow -->
+    <circle cx="361" cy="92" r="10" />
+  </g>
+
+  <!-- MID-DEPTH CONTOUR OUTLINES -->
+  <g fill="#242244" stroke="#121324" stroke-width="3" stroke-linejoin="round">
+    <!-- F -->
+    <path d="M 85,25 L 145,25 L 145,45 L 109,45 L 109,56 L 138,56 L 138,74 L 109,74 L 109,102 L 85,102 Z" />
+    <!-- O -->
+    <path d="M 160,36 C 160,26 170,22 182,22 L 224,22 C 236,22 246,26 246,36 L 246,91 C 246,101 236,105 224,105 L 182,105 C 170,105 160,101 160,91 Z M 184,45 C 184,41 188,39 192,39 L 214,39 C 218,39 222,41 222,45 L 222,82 C 222,86 218,88 214,88 L 192,88 C 188,88 184,86 184,82 Z" fill-rule="evenodd" />
+    <!-- P -->
+    <path d="M 262,25 L 314,25 C 326,25 334,31 334,44 L 334,58 C 334,71 326,77 314,77 L 286,77 L 286,102 L 262,102 Z M 286,43 L 308,43 C 311,43 313,44 313,47 L 313,55 C 313,58 311,59 308,59 L 286,59 Z" fill-rule="evenodd" />
+    <!-- ! Stem -->
+    <path d="M 350,25 L 372,25 L 369,72 L 353,72 Z" />
+    <!-- ! Dot -->
+    <circle cx="361" cy="92" r="10" />
+  </g>
+
+  <!-- FOREGROUND VIBRANT GRADIENT LETTERS WITH PIXEL HIGHLIGHTS -->
+  <g>
+    <!-- F (Lavender) -->
+    <path d="M 85,25 L 145,25 L 145,45 L 109,45 L 109,56 L 138,56 L 138,74 L 109,74 L 109,102 L 85,102 Z" fill="url(#gradF)" stroke="#fff" stroke-width="1.2" />
+    <!-- F Inner Highlight Bar -->
+    <rect x="88" y="28" width="53" height="4" fill="#fff" opacity="0.6" />
+    <rect x="88" y="32" width="6" height="66" fill="#fff" opacity="0.6" />
+
+    <!-- O (Gold / Cream) -->
+    <path d="M 160,36 C 160,26 170,22 182,22 L 224,22 C 236,22 246,26 246,36 L 246,91 C 246,101 236,105 224,105 L 182,105 C 170,105 160,101 160,91 Z M 184,45 C 184,41 188,39 192,39 L 214,39 C 218,39 222,41 222,45 L 222,82 C 222,86 218,88 214,88 L 192,88 C 188,88 184,86 184,82 Z" fill="url(#gradO)" fill-rule="evenodd" stroke="#fff" stroke-width="1.2" />
+    <!-- O Inner Highlight -->
+    <path d="M 182,25 L 224,25 C 232,25 241,28 241,35 L 241,38 C 238,30 228,28 220,28 L 182,28 Z" fill="#fff" opacity="0.7" />
+
+    <!-- P (Blush Pink) -->
+    <path d="M 262,25 L 314,25 C 326,25 334,31 334,44 L 334,58 C 334,71 326,77 314,77 L 286,77 L 286,102 L 262,102 Z M 286,43 L 308,43 C 311,43 313,44 313,47 L 313,55 C 313,58 311,59 308,59 L 286,59 Z" fill="url(#gradP)" fill-rule="evenodd" stroke="#fff" stroke-width="1.2" />
+    <!-- P Inner Highlight -->
+    <rect x="265" y="28" width="46" height="4" fill="#fff" opacity="0.7" />
+    <rect x="265" y="32" width="6" height="66" fill="#fff" opacity="0.7" />
+
+    <!-- ! (Gold) -->
+    <path d="M 350,25 L 372,25 L 369,72 L 353,72 Z" fill="url(#gradExcl)" stroke="#fff" stroke-width="1.2" />
+    <rect x="353" y="28" width="16" height="4" fill="#fff" opacity="0.7" />
+    
+    <!-- ! Dot -->
+    <circle cx="361" cy="92" r="10" fill="url(#gradExcl)" stroke="#fff" stroke-width="1.2" />
+    <circle cx="358" cy="89" r="3" fill="#fff" opacity="0.8" />
+  </g>
+
+  <!-- Sweet Blushing Heart Next to '!' -->
+  <g transform="translate(382, 38) scale(1.15)">
+    <!-- Shadow -->
+    <path d="M 12 5 C 12 1 18 1 21 5 C 24 1 30 1 30 5 C 30 11 21 17 21 17 C 21 17 12 11 12 5 Z" fill="#121324" transform="translate(2, 3)" />
+    <!-- Body -->
+    <path d="M 12 5 C 12 1 18 1 21 5 C 24 1 30 1 30 5 C 30 11 21 17 21 17 C 21 17 12 11 12 5 Z" fill="url(#gradHeart)" stroke="#fff" stroke-width="1.4" />
+    <!-- Gloss -->
+    <circle cx="16" cy="4" r="1.5" fill="#fff" opacity="0.9" />
+  </g>
+
+  <!-- BOTTOM SLEEK RIBBON PILL -->
+  <g transform="translate(0, 116)" filter="url(#shadowFilter)">
+    <!-- Ribbon Base Frame -->
+    <rect x="30" y="2" width="400" height="32" rx="16" fill="url(#bannerBg)" stroke="#8b7bb8" stroke-width="1.8" />
+    <rect x="33" y="5" width="394" height="26" rx="13" fill="none" stroke="rgba(255, 238, 140, 0.45)" stroke-width="1" />
+
+    <!-- Left Star (Lavender) -->
+    <polygon points="50,18 54,12 58,18 54,24" fill="#c8bfe7" />
+    <circle cx="54" cy="18" r="1.5" fill="#fff" />
+
+    <!-- Subtitle Text -->
+    <text x="230" y="22.5" class="banner-text">A LITTLE ADVENTURE THROUGH OUR MEMORIES</text>
+
+    <!-- Right Star (Gold) -->
+    <polygon points="402,18 406,12 410,18 406,24" fill="#ffee8c" />
+    <circle cx="406" cy="18" r="1.5" fill="#fff" />
+  </g>
+</svg>

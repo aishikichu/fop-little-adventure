@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>FOP! — A Little Adventure Through Our Memories</title>
+  <meta name="description" content="A cozy pixel-art memory adventure with Player (lavender-blue hair) and Companion (cream-blonde hair with nine fox tails)." />
+  <link rel="stylesheet" href="/src/ui/styles/ui.css" />
+  <style>
+    /* Playfield Canvas & Stage */
+    #game-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #181a30;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #world-canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* Interactive Director Tool Dock */
+    .director-dock {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(18, 19, 36, 0.92);
+      border: 1.5px solid var(--c-gold-mid);
+      border-radius: 14px;
+      padding: 8px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      box-shadow: var(--shadow-pixel);
+      z-index: 120;
+      backdrop-filter: blur(4px);
+    }
+
+    .dock-label {
+      font-family: var(--font-pixel-label);
+      font-size: 13px;
+      color: var(--c-gold-light);
+      margin-right: 6px;
+    }
+
+    .dock-btn {
+      background: var(--c-navy-mid);
+      border: 1px solid var(--c-lavender-mid);
+      border-radius: 8px;
+      color: var(--c-cream-light);
+      font-family: var(--font-dialogue);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all var(--trans-fast);
+    }
+
+    .dock-btn:hover {
+      background: var(--c-lavender-dark);
+      border-color: var(--c-gold-mid);
+      color: var(--c-gold-light);
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient VFX Canvas -->
+  <canvas id="ambient-vfx-canvas"></canvas>
+
+  <!-- Game Stage -->
+  <div id="game-stage">
+    <canvas id="world-canvas" width="640" height="384"></canvas>
+  </div>
+
+  <!-- UI Overlay Container -->
+  <div id="game-ui-container"></div>
+
+  <!-- Visual Director Quick Navigation Dock (For live inspection & testing) -->
+  <div class="director-dock">
+    <span class="dock-label">✨ Visual Director Test:</span>
+    <button class="dock-btn" id="btn-talk-companion">Talk Companion ♡</button>
+    <button class="dock-btn" id="btn-talk-player">Talk Player</button>
+    <button class="dock-btn" id="btn-collect-star">Collect Star ⭐</button>
+    <button class="dock-btn" id="btn-next-scene">Next Scenery 🏞️</button>
+    <button class="dock-btn" id="btn-show-ending">Show Ending 💖</button>
+  </div>
+
+  <script type="module">
+    import { UIController, SoundFX } from './src/ui/index.js';
+
+    // Initialize UI Controller
+    const ui = new UIController();
+
+    // Setup World Canvas for cozy scene rendering
+    const canvas = document.getElementById('world-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    // Load assets for live scene showcase
+    const images = {};
+    const assetList = [
+      ['torii', '/assets/tilesets/moonlit_meeting/torii_gate.png'],
+      ['stone_lantern', '/assets/tilesets/moonlit_meeting/stone_lantern.png'],
+      ['sakura', '/assets/tilesets/moonlit_meeting/cherry_blossom_tree.png'],
+      ['merchant_stall', '/assets/tilesets/merchant_stall/merchant_stall.png'],
+      ['merchant_npc', '/assets/tilesets/merchant_stall/merchant_npc.png'],
+      ['frog_sheet', '/assets/tilesets/frog_forest/frog_spritesheet.png'],
+      ['lilypads', '/assets/tilesets/frog_forest/lilypads.png'],
+      ['mushrooms', '/assets/tilesets/frog_forest/glowing_mushrooms.png'],
+      ['fireplace', '/assets/tilesets/memory_room/fireplace.png'],
+      ['bookshelf', '/assets/tilesets/memory_room/bookshelf.png'],
+      ['cozy_rug', '/assets/tilesets/memory_room/cozy_rug.png'],
+      ['memory_frames', '/assets/tilesets/memory_room/memory_frames.png'],
+      ['garden_arch', '/assets/tilesets/confession_garden/garden_arch.png'],
+      ['moon_fountain', '/assets/tilesets/confession_garden/moon_fountain.png'],
+      ['stone_bench', '/assets/tilesets/confession_garden/stone_bench.png'],
+      ['glowing_flowers', '/assets/tilesets/confession_garden/glowing_flowers.png'],
+      ['constellations', '/assets/tilesets/constellation_sky/constellations.png'],
+      ['memory_star', '/assets/items/memory_star.png'],
+      ['player_sheet', '/assets/characters/player/player_spritesheet.png'],
+      ['companion_sheet', '/assets/characters/companion/companion_spritesheet.png'],
+      ['sprout_grass', '/assets/tilesets/sprout_lands/grass.png'],
+      ['sprout_paths', '/assets/tilesets/sprout_lands/paths.png'],
+      ['sprout_bridge', '/assets/tilesets/sprout_lands/wood_bridge.png']
+    ];
+
+    let loadedCount = 0;
+    assetList.forEach(([key, src]) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        images[key] = img;
+        loadedCount++;
+      };
+    });
+
+    // Scenery Scenes:
+    // 0: Moonlit EN-JP Meeting Area
+    // 1: Suspicious Pocket Merchant Stall
+    // 2: Frog Forest & Pond
+    // 3: Cozy Memory Room
+    // 4: Moonlit Confession Garden & Constellation Sky
+    let currentScene = 0;
+    const sceneTitles = [
+      { num: 1, title: 'The Meeting by the Torii Gate', sub: 'Chapter I: Where Our Stories Entwined' },
+      { num: 2, title: 'The Suspicious Pocket Merchant', sub: 'Chapter II: Curiosities & Antique Tokens' },
+      { num: 3, title: 'The Frog Pond in the Deep Forest', sub: 'Chapter III: Ripples and Whispers' },
+      { num: 4, title: 'The Cozy Memory Room', sub: 'Chapter IV: Warm Hearth & Nostalgic Tomes' },
+      { num: 5, title: 'The Moonlit Confession Garden', sub: 'Chapter V: Starlit Vows Forever' }
+    ];
+
+    // Character Positions & State
+    const player = { x: 260, y: 220, dir: 'down', frame: 0, moving: false };
+    const companion = { x: 330, y: 220, dir: 'down', frame: 0, state: 'idle' };
+
+    // Mobile / Keyboard Input handling for demo movement
+    window.GameEvents.on('input:move', ({ x, y }) => {
+      if (x !== 0 || y !== 0) {
+        player.moving = true;
+        player.x += x * 3;
+        player.y += y * 3;
+        if (x < 0) player.dir = 'left';
+        else if (x > 0) player.dir = 'right';
+        else if (y < 0) player.dir = 'up';
+        else if (y > 0) player.dir = 'down';
+
+        // Companion softly follows player
+        const dx = player.x - companion.x;
+        const dy = player.y - companion.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 50) {
+          companion.x += (dx / dist) * 2.2;
+          companion.y += (dy / dist) * 2.2;
+          if (Math.abs(dx) > Math.abs(dy)) {
+            companion.dir = dx > 0 ? 'right' : 'left';
+          } else {
+            companion.dir = dy > 0 ? 'down' : 'up';
+          }
+        }
+      } else {
+        player.moving = false;
+      }
+    });
+
+    // Keyboard arrow / WASD movement
+    const keys = {};
+    window.addEventListener('keydown', (e) => {
+      keys[e.code] = true;
+      updateKeyboardMove();
+    });
+    window.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+      updateKeyboardMove();
+    });
+
+    function updateKeyboardMove() {
+      let mx = 0, my = 0;
+      if (keys['ArrowUp'] || keys['KeyW']) my -= 1;
+      if (keys['ArrowDown'] || keys['KeyS']) my += 1;
+      if (keys['ArrowLeft'] || keys['KeyA']) mx -= 1;
+      if (keys['ArrowRight'] || keys['KeyD']) mx += 1;
+      window.GameEvents.emit('input:move', { x: mx, y: my });
+    }
+
+    // Main Render Loop
+    let lastTime = 0;
+    let animTimer = 0;
+    let starCollectCount = 0;
+
+    function render(time) {
+      const dt = (time - lastTime) / 1000;
+      lastTime = time;
+      animTimer += dt;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 1. Draw Scenery Background
+      drawScene(ctx, currentScene, animTimer);
+
+      // 2. Draw Companion (Cream-blonde, 9 tails)
+      drawCharacter(ctx, images['companion_sheet'], companion.x, companion.y, companion.dir, animTimer, false);
+
+      // 3. Draw Player (Lavender-blue hair)
+      drawCharacter(ctx, images['player_sheet'], player.x, player.y, player.dir, animTimer, player.moving);
+
+      // 4. Draw Floating Memory Star Collectible in scene
+      if (images['memory_star']) {
+        const starFrame = Math.floor(animTimer * 4) % 4;
+        const starBob = Math.sin(animTimer * 3) * 4;
+        ctx.drawImage(images['memory_star'], starFrame * 32, 0, 32, 32, 480, 160 + starBob, 32, 32);
+      }
+
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    function drawCharacter(ctx, sheet, x, y, dir, timer, isMoving) {
+      if (!sheet) return;
+      const cellW = 48, cellH = 64;
+      let row = 0;
+      if (dir === 'down') row = 0;
+      else if (dir === 'up') row = 1;
+      else if (dir === 'left') row = 2;
+      else if (dir === 'right') row = 3;
+
+      let col = 0;
+      if (isMoving) {
+        col = Math.floor(timer * 6) % 4;
+      } else {
+        col = (Math.floor(timer * 2) % 2) * 2; // frames 0 and 2 for breathing idle
+      }
+
+      // Draw soft drop shadow under character
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(x + cellW / 2, y + cellH - 4, 14, 5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(10, 11, 20, 0.4)';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.drawImage(sheet, col * cellW, row * cellH, cellW, cellH, x, y, cellW, cellH);
+    }
+
+    function drawScene(ctx, sceneIdx, timer) {
+      // Background base
+      if (sceneIdx === 3) {
+        // Cozy Room Wooden Floor
+        ctx.fillStyle = '#6d4c3d';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#55372b';
+        for (let y = 0; y < canvas.height; y += 16) {
+          ctx.fillRect(0, y, canvas.width, 1);
+        }
+        // Room Wall top
+        ctx.fillStyle = '#3a2722';
+        ctx.fillRect(0, 0, canvas.width, 110);
+        ctx.fillStyle = '#291b17';
+        ctx.fillRect(0, 108, canvas.width, 4);
+
+        // Fireplace (animated)
+        if (images['fireplace']) {
+          const f = Math.floor(timer * 4) % 3;
+          ctx.drawImage(images['fireplace'], f * 48, 0, 48, 48, 280, 62, 72, 72);
+        }
+        // Bookshelf
+        if (images['bookshelf']) {
+          ctx.drawImage(images['bookshelf'], 120, 40, 48, 72);
+        }
+        // Memory Frames
+        if (images['memory_frames']) {
+          ctx.drawImage(images['memory_frames'], 420, 50, 48, 36);
+        }
+        // Rug
+        if (images['cozy_rug']) {
+          ctx.drawImage(images['cozy_rug'], 240, 200, 128, 80);
+        }
+      } else {
+        // Outdoor Night Lawn
+        ctx.fillStyle = '#243b2c';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Winding stone path
+        ctx.fillStyle = '#3b423f';
+        ctx.beginPath();
+        ctx.ellipse(320, 260, 220, 70, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (sceneIdx === 0) {
+          // Scene 0: Moonlit EN-JP Meeting Area
+          if (images['torii']) {
+            ctx.drawImage(images['torii'], 260, 50, 96, 96);
+          }
+          if (images['sakura']) {
+            ctx.drawImage(images['sakura'], 60, 40, 110, 110);
+            ctx.drawImage(images['sakura'], 470, 60, 100, 100);
+          }
+          if (images['stone_lantern']) {
+            ctx.drawImage(images['stone_lantern'], 200, 150, 36, 36);
+            ctx.drawImage(images['stone_lantern'], 390, 150, 36, 36);
+          }
+        } else if (sceneIdx === 1) {
+          // Scene 1: Suspicious Pocket Merchant Stall
+          if (images['merchant_stall']) {
+            ctx.drawImage(images['merchant_stall'], 250, 70, 110, 110);
+          }
+          if (images['merchant_npc']) {
+            ctx.drawImage(images['merchant_npc'], 285, 120, 42, 60);
+          }
+          if (images['sakura']) {
+            ctx.drawImage(images['sakura'], 80, 50, 96, 96);
+          }
+        } else if (sceneIdx === 2) {
+          // Scene 2: Frog Forest & Pond
+          ctx.fillStyle = '#1e485a'; // Pond water
+          ctx.beginPath();
+          ctx.ellipse(320, 160, 160, 70, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (images['lilypads']) {
+            ctx.drawImage(images['lilypads'], 240, 140, 36, 36);
+            ctx.drawImage(images['lilypads'], 340, 160, 36, 36);
+          }
+          if (images['frog_sheet']) {
+            const f = Math.floor(timer * 2.5) % 4;
+            ctx.drawImage(images['frog_sheet'], f * 32, 0, 32, 32, 280, 145, 36, 36);
+          }
+          if (images['mushrooms']) {
+            ctx.drawImage(images['mushrooms'], 120, 200, 36, 36);
+            ctx.drawImage(images['mushrooms'], 470, 180, 36, 36);
+          }
+        } else if (sceneIdx === 4) {
+          // Scene 4: Moonlit Confession Garden & Constellations
+          if (images['constellations']) {
+            ctx.drawImage(images['constellations'], 240, 20, 160, 120);
+          }
+          if (images['garden_arch']) {
+            ctx.drawImage(images['garden_arch'], 270, 80, 80, 106);
+          }
+          if (images['moon_fountain']) {
+            ctx.drawImage(images['moon_fountain'], 120, 150, 64, 64);
+          }
+          if (images['stone_bench']) {
+            ctx.drawImage(images['stone_bench'], 440, 170, 64, 32);
+          }
+          if (images['glowing_flowers']) {
+            ctx.drawImage(images['glowing_flowers'], 200, 220, 36, 18);
+            ctx.drawImage(images['glowing_flowers'], 390, 220, 36, 18);
+          }
+        }
+      }
+    }
+
+    // --- Interactive Visual Director Demo Controls ---
+    document.getElementById('btn-talk-companion').addEventListener('click', () => {
+      window.GameEvents.emit('dialogue:show', {
+        speaker: 'Companion',
+        character: 'companion',
+        portrait: 'love',
+        text: 'Look at the moonlight through the trees... Every little step we take together fills this journey with warmth ♡',
+        choices: [
+          { text: 'I am so glad to be here with you.', nextId: '1' },
+          { text: 'Let’s find the remaining Memory Stars together!', nextId: '2' }
+        ],
+        onChoice: (idx, choice) => {
+          setTimeout(() => {
+            window.GameEvents.emit('dialogue:show', {
+              speaker: 'Companion',
+              character: 'companion',
+              portrait: 'wink',
+              text: 'Hehe, promise me we will always remember this night! ✨'
+            });
+          }, 300);
+        }
+      });
+    });
+
+    document.getElementById('btn-talk-player').addEventListener('click', () => {
+      window.GameEvents.emit('dialogue:show', {
+        speaker: 'Player',
+        character: 'player',
+        portrait: 'curious',
+        text: 'Did you hear that gentle chime? A Memory Star is glowing nearby...',
+        choices: [
+          { text: 'Let’s search by the stone lanterns.', nextId: '1' },
+          { text: 'Hold my hand and follow me.', nextId: '2' }
+        ]
+      });
+    });
+
+    document.getElementById('btn-collect-star').addEventListener('click', () => {
+      starCollectCount = Math.min(5, starCollectCount + 1);
+      window.GameEvents.emit('star:add', { amount: 1 });
+      if (starCollectCount === 5) {
+        window.GameEvents.emit('quest:set', {
+          title: 'All Memories Gathered',
+          objective: 'Meet in the Moonlit Confession Garden'
+        });
+      }
+    });
+
+    document.getElementById('btn-next-scene').addEventListener('click', () => {
+      currentScene = (currentScene + 1) % sceneTitles.length;
+      const s = sceneTitles[currentScene];
+      window.GameEvents.emit('chapter:transition', {
+        chapterNumber: s.num,
+        title: s.title,
+        subtitle: s.sub
+      });
+      window.GameEvents.emit('quest:set', {
+        title: s.title,
+        objective: `Explore the surroundings in ${s.title}`
+      });
+    });
+
+    document.getElementById('btn-show-ending').addEventListener('click', () => {
+      window.GameEvents.emit('ending:show', {
+        letter: 'From our first meeting beneath the lanterns to the quiet garden of our vows, every memory star glows for you. Thank you for making my world so bright.'
+      });
+    });
+  </script>
+</body>
+</html>

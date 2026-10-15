@@ -1,0 +1,115 @@
+{
+  "character": "companion",
+  "identity": "COMPANION / RECIPIENT (Cream-blonde hair, 9 fox tails)",
+  "cellWidth": 48,
+  "cellHeight": 64,
+  "columns": 4,
+  "rows": 5,
+  "animations": {
+    "idle_down": {
+      "row": 0,
+      "frames": [
+        0,
+        2
+      ],
+      "frameRate": 2,
+      "loop": true
+    },
+    "walk_down": {
+      "row": 0,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 6,
+      "loop": true
+    },
+    "idle_up": {
+      "row": 1,
+      "frames": [
+        0,
+        2
+      ],
+      "frameRate": 2,
+      "loop": true
+    },
+    "walk_up": {
+      "row": 1,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 6,
+      "loop": true
+    },
+    "idle_left": {
+      "row": 2,
+      "frames": [
+        0,
+        2
+      ],
+      "frameRate": 2,
+      "loop": true
+    },
+    "walk_left": {
+      "row": 2,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 6,
+      "loop": true
+    },
+    "idle_right": {
+      "row": 3,
+      "frames": [
+        0,
+        2
+      ],
+      "frameRate": 2,
+      "loop": true
+    },
+    "walk_right": {
+      "row": 3,
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "frameRate": 6,
+      "loop": true
+    },
+    "wave": {
+      "row": 4,
+      "frames": [
+        0,
+        1
+      ],
+      "frameRate": 4,
+      "loop": true
+    },
+    "jump": {
+      "row": 4,
+      "frames": [
+        2
+      ],
+      "frameRate": 1,
+      "loop": false
+    },
+    "sit": {
+      "row": 4,
+      "frames": [
+        3
+      ],
+      "frameRate": 1,
+      "loop": false
+    }
+  }
+}
