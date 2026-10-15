@@ -7,7 +7,7 @@ import './game/designerBridge.js';
 // Activate Designer UI
 installDesignerUI();
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: 400,
@@ -17,7 +17,8 @@ new Phaser.Game({
   backgroundColor: '#191a31',
   scale: {
     mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    // The flex container centers the canvas. Phaser margins would center it twice.
+    autoCenter: Phaser.Scale.NO_CENTER
   },
   physics: {
     default: 'arcade',
@@ -25,3 +26,20 @@ new Phaser.Game({
   },
   scene: [Adventure]
 });
+
+// Browser toolbars, orientation and wrapped HUD text can change the available area.
+const app = document.getElementById('app');
+const chapter = document.querySelector('.chapter');
+const hudObserver = new ResizeObserver(() => {
+  app.style.setProperty('--hud-bottom', `${chapter.getBoundingClientRect().bottom - app.getBoundingClientRect().top + 12}px`);
+});
+hudObserver.observe(chapter);
+hudObserver.observe(document.querySelector('header'));
+const gameObserver = new ResizeObserver(() => {
+  if (game.isBooted) {
+    game.scale.getParentBounds();
+    game.scale.refresh();
+  }
+});
+gameObserver.observe(document.getElementById('game'));
+game.events.once('destroy', () => { hudObserver.disconnect(); gameObserver.disconnect(); });

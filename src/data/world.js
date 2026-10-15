@@ -6,7 +6,7 @@ export const chapters=story.scenes.map((s,i)=>({
  ...s,subtitle:i===0?'PROLOGUE':`CHAPTER ${String(i).padStart(2,'0')}`,quest:s.objective,color:layout[i].color,
  objects:s.interactions.map((o,j)=>{
   const config=layout[i].objects[j];
-  return {...config,...o,kind:visuals[o.id]||config.kind,cue:s.id==='pocket'?undefined:config.cue,character:(o.speaker.startsWith('fox')||o.speaker==='companion'||o.speaker==='memma')?'companion':'player',emotes:emotes[o.id]||['neutral']};
+  return {...config,...o,kind:visuals[o.id]||config.kind,cue:s.id==='pocket'?undefined:config.cue,character:o.id==='frog-small'?'player':(o.speaker.startsWith('fox')||o.speaker==='companion'||o.speaker==='memma')?'companion':'player',emotes:emotes[o.id]||['neutral']};
  }).filter(o=>o.dialogue.length||o.ending||o.puzzle),
 }));
 export const obstacles=[{x:80,y:64,w:46,h:35},{x:280,y:65,w:56,h:28},{x:540,y:220,w:42,h:65},{x:80,y:275,w:55,h:32}];

@@ -1,4 +1,8 @@
 import {test,expect} from '@playwright/test';
+// Keep production-build checks deterministic when external fonts are unavailable.
+test.beforeEach(async({page})=>{
+ await page.route('https://fonts.googleapis.com/**',route=>route.fulfill({contentType:'text/css',body:''}));
+});
 const inspect=page=>page.evaluate(()=>window.fop.inspect());
 async function walk(page,x,y){
  for(let n=0;n<100;n++){
@@ -20,7 +24,24 @@ test('complete all chapters, puzzles, five stars, ending, resume, replay and res
  await visit(page,'meet');await expect.poll(async()=>(await inspect(page)).progress.seen).toContain('meet');
  await next(page);await visit(page,'hello-note');await visit(page,'hello-pause');await visit(page,'hello-star');await next(page);
  await visit(page,'pocket-spoon');await visit(page,'pocket-noise');await visit(page,'pocket-pocket');await next(page);
- await visit(page,'choir');await page.locator('[data-fop="2"]').click();await expect(page.locator('#fopFeedback')).toContainText('abwaa');
+ for (const [id,character] of [['frog-small','player'],['frog-many','companion']]) {
+  const o=(await inspect(page)).objects.find(o=>o.id===id);
+  await walk(page,o.x,o.y+24);await page.keyboard.press('e');
+  await expect(page.locator('#dialogue')).toBeVisible();
+  await expect(page.locator('#portraitImg')).toHaveAttribute('src',new RegExp(`/characters/${character}/portraits/neutral\\.png$`));
+  await expect.poll(()=>page.locator('#portraitImg').evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+  await talk(page);
+ }
+ await visit(page,'choir');
+ await expect(page.locator('#minigame')).toContainText('THE FOX CHOIR');
+ await expect(page.locator('#minigame')).not.toContainText(/🐸|FROG/i);
+ for (const img of await page.locator('.fop-portraits img').all()) await expect.poll(()=>img.evaluate(img=>img.complete&&img.naturalWidth>0)).toBe(true);
+ await page.screenshot({path:'test-results/fox-choir-desktop.png'});
+ await page.setViewportSize({width:390,height:844});
+ await expect(page.locator('[data-fop="2"]')).toBeInViewport();
+ await page.screenshot({path:'test-results/fox-choir-mobile.png'});
+ await page.setViewportSize({width:1280,height:900});
+ await page.locator('[data-fop="2"]').click();await expect(page.locator('#fopFeedback')).toContainText('abwaa');
  for(let i=0;i<3;i++)await page.locator(`[data-fop="${i}"]`).click();await talk(page);await next(page);
  await visit(page,'room-chat');await visit(page,'room-call');await visit(page,'room-music');await visit(page,'room-keepsake');await next(page);
  await visit(page,'garden-star');await visit(page,'bench');await expect(page.locator('#ending')).toBeVisible();

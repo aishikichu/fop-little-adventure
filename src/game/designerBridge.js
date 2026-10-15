@@ -13,7 +13,7 @@ GameEvents.on('game:resume',()=>bridge.dispatch('close-menu'));
 GameEvents.on('audio:volume',({mute})=>{if(typeof mute==='boolean'&&bridge.getState().sound===mute)bridge.dispatch('sound')});
 let lastPage='',lastChapter='';
 bridge.subscribe(({type,payload:p})=>{
- if(type==='dialogue'&&p.pageId!==lastPage){lastPage=p.pageId;GameEvents.emit('dialogue:show',{speaker:p.speaker,character:'player',portrait:'neutral',text:p.fullText,onComplete:()=>{bridge.dispatch('advance');if(bridge.inspect?.().mode==='dialogue'&&lastPage===p.pageId)bridge.dispatch('advance')}})}
+ if(type==='dialogue'&&p.pageId!==lastPage){lastPage=p.pageId;GameEvents.emit('dialogue:show',{speaker:p.speaker,character:p.character||'player',portrait:p.emote||'neutral',text:p.fullText,onComplete:()=>{bridge.dispatch('advance');if(bridge.inspect?.().mode==='dialogue'&&lastPage===p.pageId)bridge.dispatch('advance')}})}
  if(type==='dialogue-close'){lastPage='';GameEvents.emit('dialogue:close')}
  if(type==='state'){
   GameEvents.emit('quest:set',{title:p.title,objective:p.quest,progress:p.stars.length,total:5});

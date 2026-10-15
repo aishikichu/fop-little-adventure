@@ -1,6 +1,6 @@
 // FOP! — Complete Elevated Designer UI for Phaser Adventure Engine
 import { bridge } from '../game/bridge.js';
-import { opening } from '../data/story.js';
+import { opening, story } from '../data/story.js';
 import { VFXManager } from './VFXManager.js';
 import { SoundFX } from './SoundFX.js';
 
@@ -57,11 +57,15 @@ export function installDesignerUI() {
       </div>
     </section>
 
-    <!-- The Frog Choir Minigame Modal -->
+    <!-- The Fox Choir Minigame Modal -->
     <section id="minigame" class="panel modal" hidden>
-      <small style="color: var(--c-cyan-glow); letter-spacing: 2px;">THE FROG CHOIR</small>
-      <h2>Everybody FOP! 🐸</h2>
-      <p>Repeat the sequence: FOP → FOPS → EVERYBODY FOP!</p>
+      <small id="fopChoirLabel" style="color: var(--c-cyan-glow); letter-spacing: 2px;"></small>
+      <div class="fop-portraits" aria-label="Fox choir">
+        <img src="${base}assets/characters/player/portraits/wink.png" alt="Lavender fox" width="64" height="64" />
+        <img src="${base}assets/characters/companion/portraits/wink.png" alt="Golden fox" width="64" height="64" />
+      </div>
+      <h2 id="fopTitle"></h2>
+      <p id="fopInstructions"></p>
       <p id="fopFeedback" role="status"></p>
       <div class="fopButtons">
         <button data-fop="0">FOP</button>
@@ -146,6 +150,9 @@ export function installDesignerUI() {
   };
 
   el('opening').textContent = opening;
+  el('fopChoirLabel').textContent = story.ui.choir;
+  el('fopTitle').textContent = story.ui.fopTitle;
+  el('fopInstructions').textContent = story.ui.fopInstructions;
 
   // Bind Standard Actions
   const bind = (id, action) => {
@@ -253,20 +260,21 @@ export function installDesignerUI() {
 
       // Update Character Portrait & Emote
       const portraitImg = el('portraitImg');
-      const isPlayer = p.character === 'player' || p.speaker?.toLowerCase().includes('you') || p.speaker?.toLowerCase().includes('aishikichu');
-      const isCompanion = p.character === 'companion' || p.speaker?.toLowerCase().includes('stranger') || p.speaker?.toLowerCase().includes('memma') || p.speaker?.toLowerCase().includes('pookie') || p.speaker?.toLowerCase().includes('fox');
-      
-      const charFolder = isCompanion ? 'companion' : (isPlayer ? 'player' : 'companion');
-      const emote = p.emote || (p.text.includes('♡') || p.text.includes('love') ? 'love' : (p.text.includes(':p') || p.text.includes('wink') ? 'wink' : 'neutral'));
-      
-      portraitImg.src = `${base}assets/characters/${charFolder}/portraits/${emote}.png`;
+      // Explicit character identity wins over the speaker's display name.
+      const charFolder = ['player', 'companion'].includes(p.character)
+        ? p.character
+        : (['you', 'player', 'aishikichu'].includes(p.speaker?.toLowerCase()) ? 'player' : 'companion');
+      const emote = ['neutral', 'wink', 'curious', 'love', 'shy'].includes(p.emote) ? p.emote : 'neutral';
+      const portraitPath = `${base}assets/characters/${charFolder}/portraits/${emote}.png`;
+      if (portraitImg.getAttribute('src') !== portraitPath) portraitImg.src = portraitPath;
 
       // Name display mapping and color coding
       let displayName = p.speaker;
       if (displayName === 'player' || displayName === 'you') displayName = 'aishikichu';
       if (displayName === 'companion' || displayName === 'pookie') displayName = 'memma';
       speakerEl.textContent = displayName;
-      speakerEl.className = isCompanion ? 'companion-speaker' : (isPlayer ? 'player-speaker' : '');
+      portraitImg.alt = `${displayName} — ${emote}`;
+      speakerEl.className = `${charFolder}-speaker`;
 
       // Voice chirp
       if (p.typing && p.text.length > 0 && p.text.length % 3 === 0) {

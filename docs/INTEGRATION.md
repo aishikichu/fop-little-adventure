@@ -222,6 +222,12 @@ The delivered UIController files are preserved but not enabled by main.js. Befor
 
 ## 7. Designer UI Integration & Verification Status (Completed)
 
+### Responsive viewport contract (2026-10-16)
+CSS owns canvas alignment; keep Phaser `autoCenter: NO_CENTER` to avoid adding margins on top of flex positioning. The app has a definite `100dvh` height (with `100vh` fallback). `src/main.js` observes the HUD to set `--hud-bottom` and observes the game container to refresh Phaser's fit scale when available space changes. Portrait phones place the world immediately below the HUD and reserve the bottom for controls; short landscape screens reserve side space. Safe-area insets protect touch controls, and dialogue/modal overflow remains scrollable. Browser layout tests cover 320–844px widths, viewport resizing, control hit areas, dialogue and ending scroll. Automated tests stub the optional remote font stylesheet to verify offline fallback without network-dependent console errors.
+
+### Fox choir portrait correction (2026-10-16)
+The active minigame uses `story.ui.choir`, `fopTitle`, and `fopInstructions`, with the existing player/companion wink portraits. Dialogue events include `character` (`player` or `companion`) and `emote` (`neutral`, `wink`, `curious`, `love`, `shy`); these are authoritative, not inferred from speaker text. The GameEvents adapter forwards these as `character` and `portrait`. The little lavender fox uses the player portrait; the golden foxes and choir use the companion portrait. Legacy `frog-small` and `frog-many` interaction IDs remain unchanged for save compatibility.
+
 As of 2026-10-15, the Designer UI has been integrated, elevated, and fully verified against Codex's engine:
 
 1. **Activated in `src/main.js`:**
